@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# HTML Reports
+reports/
+
+# Logs
+logs/
+*.log
+
+# Virtual Environment
+venv/
+.venv/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Environment Files
+.env
