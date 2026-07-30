@@ -2,7 +2,6 @@ import json
 import requests
 from logger import logger
 
-logger = logger.getLogger()
 
 with open("config/api_config.json", "r") as file:
     config = json.load(file)
