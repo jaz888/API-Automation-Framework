@@ -12,28 +12,19 @@ jobs:
     env:
       DATABASE_URL: mysql+pymysql://root:root123!@127.0.0.1:3306/products
 
-
-
     services:
-  mysql:
-    image: mysql:8.0
-
-    env:
-        MYSQL_ROOT_PASSWORD: root123!
-        MYSQL_DATABASE: products
-  
-    
-    ports:
-      - 3306:3306
-    options: >-
-      --health-cmd="mysqladmin ping -h 127.0.0.1 -proot123!"
-      --health-interval=10s
-      --health-timeout=5s
-      --health-retries=10
-   
-
-
-     
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root123!
+          MYSQL_DATABASE: products
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot123!"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - name: Checkout Repository
@@ -51,14 +42,16 @@ jobs:
 
       - name: Start FastAPI Server
         run: |
-          uvicorn main:app --host 127.0.0.1 --port 8000 &
-          sleep 5
+          uvicorn main:app --host 127.0.0.1 --port 8000 > uvicorn.log 2>&1 &
+          sleep 10
+          cat uvicorn.log
 
       - name: Run API Tests
         run: |
           python -m pytest --html=reports/report.html --self-contained-html
 
       - name: Upload HTML Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: API-Test-Report
