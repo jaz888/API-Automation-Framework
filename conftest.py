@@ -25,11 +25,10 @@ def created_product():
 
 
 def pytest_configure(config):
-    config._metadata["Project"] = "Automation Framework"
-    config._metadata["Tester"] = "Jaz"
-    config._metadata["API"] = "Products API"
-
-
+    if hasattr(config, "_metadata"):
+        config._metadata["Project"] = "Automation Framework"
+        config._metadata["Tester"] = "Jaz"
+        config._metadata["API"] = "Products API"
 
 
 
