@@ -40,15 +40,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Create Logs and Reports Folders
+        run: |
+          mkdir -p logs
+          mkdir -p reports
+
       - name: Start FastAPI Server
         run: |
-          uvicorn main:app --host 127.0.0.1 --port 8000 > uvicorn.log 2>&1 &
+          uvicorn main:app --host 127.0.0.1 --port 8000 --log-level debug > logs/uvicorn.log 2>&1 &
           sleep 10
-          cat uvicorn.log
 
       - name: Run API Tests
         run: |
           python -m pytest --html=reports/report.html --self-contained-html
+
+      - name: Show Uvicorn Log
+        if: always()
+        run: |
+          echo "========== Uvicorn Log =========="
+          cat logs/uvicorn.log
 
       - name: Upload HTML Report
         if: always()
@@ -56,3 +66,10 @@ jobs:
         with:
           name: API-Test-Report
           path: reports/report.html
+
+      - name: Upload Uvicorn Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Uvicorn-Log
+          path: logs/uvicorn.log
