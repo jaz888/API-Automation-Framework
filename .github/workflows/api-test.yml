@@ -22,17 +22,18 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: run FastAPI server
+
+      - name: Start FastAPI Server
         run: |
           uvicorn main:app --host 127.0.0.1 --port 8000 &
           sleep 5
+
       - name: Run API Tests
         run: |
-          python -m pytest --html=report.html --self-contained-html
-      -name : Upload Test Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: api-test-report
-          path: reports/report.html
+          python -m pytest --html=reports/report.html --self-contained-html
 
-      
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: API-Test-Report
+          path: reports/report.html
