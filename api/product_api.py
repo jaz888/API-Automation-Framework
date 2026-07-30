@@ -5,8 +5,9 @@ def get_products():
     return get("/products")
 
 
-def get_product(product_id):
+def get_product_by_id(product_id):
     return get(f"/products/{product_id}")
+
 
 
 def create_product(product):
