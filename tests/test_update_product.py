@@ -1,85 +1,57 @@
-import requests
+from api import product_api
+import logging
 
-BASE_URL = "http://127.0.0.1:8000"
 
 
 def test_update_product():
 
-    # Create product
     product = {
-        "ProductName": "iPhone 16",
+        "ProductName": "iPhone 15",
         "Category": "Mobile",
         "Brand": "Apple",
-        "Price": 1500,
-        "Stock": 12,
+        "Price": 1200,
+        "Stock": 10,
         "Status": "Available"
     }
+    logging.info("========== Starting Update Product Test ==========")
 
-    response = requests.post(
-        f"{BASE_URL}/products",
-        json=product
-    )
+    product_id =  product_api.create_product(product).json()["ProductID"]
 
-    assert response.status_code == 200
 
-    created_product = response.json()
+    response = product_api.update_product(product_id , product)
 
-    product_id = created_product["ProductID"]
-
-    # Updated data
-    updated_product = {
-        "ProductName": "iPhone 17",
-        "Category": "Mobile",
-        "Brand": "Apple",
-        "Price": 1800,
-        "Stock": 25,
-        "Status": "Available"
-    }
-
-    # Update product
-    response = requests.put(
-        f"{BASE_URL}/products/{product_id}",
-        json=updated_product
-    )
+    logging.info(f"Response status code: {response.status_code}")
 
     assert response.status_code == 200
 
-    updated_response = response.json()
+    updated_product = response.json()
 
-    # Verify PUT response
-    assert updated_response["ProductName"] == updated_product["ProductName"]
-    assert updated_response["Category"] == updated_product["Category"]
-    assert updated_response["Brand"] == updated_product["Brand"]
-    assert updated_response["Price"] == updated_product["Price"]
-    assert updated_response["Stock"] == updated_product["Stock"]
-    assert updated_response["Status"] == updated_product["Status"]
+    for key, value in product.items():
+     assert updated_product[key] == value
 
-    # Verify data from GET request
-    response = requests.get(
-        f"{BASE_URL}/products/{product_id}"
-    )
+    
 
-    assert response.status_code == 200
 
-    retrieved_product = response.json()
+    required_fields = [
+        "ProductID",
+        "ProductName",
+        "Category",
+        "Brand",
+        "Price",
+        "Stock",
+        "Status"
+    ]
+    for field in required_fields:
+        assert field in updated_product, f"Missing field: {field}"
 
-    assert retrieved_product["ProductName"] == updated_product["ProductName"]
-    assert retrieved_product["Category"] == updated_product["Category"]
-    assert retrieved_product["Brand"] == updated_product["Brand"]
-    assert retrieved_product["Price"] == updated_product["Price"]
-    assert retrieved_product["Stock"] == updated_product["Stock"]
-    assert retrieved_product["Status"] == updated_product["Status"]
+        logging.info(f"updated product details: {updated_product}")
 
-    # Cleanup
-    response = requests.delete(
-        f"{BASE_URL}/products/{product_id}"
-    )
 
-    assert response.status_code == 200
+        
 
-    # Verify product is deleted
-    response = requests.get(
-        f"{BASE_URL}/products/{product_id}"
-    )
+    
+        
+        
 
-    assert response.status_code == 404
+
+

@@ -1,31 +1,39 @@
-import requests
-
-BASE_URL = "http://127.0.0.1:8000"
+from api import product_api
+import logging
 
 
 def test_get_product_by_id():
 
-    response = requests.get(f"{BASE_URL}/products")
+    response = product_api.get_product_by_id(1)
 
-    assert response.status_code == 200
+   
 
-    products = response.json()
-
-    assert len(products) > 0
-
-    product_id = products[0]["ProductID"]
-
-    response = requests.get(
-        f"{BASE_URL}/products/{product_id}"
-    )
+    logging.info(f"Response status code: {response.status_code}")
+    logging.info(f"Response data: {response.json()}")
 
     assert response.status_code == 200
 
     product = response.json()
 
-    assert product["ProductID"] == product_id
-    assert "ProductName" in product
-    assert "Category" in product
-    assert "Brand" in product
-    assert "Price" in product
-    assert "Stock" in product
+    assert product["ProductID"] == 1
+
+    product_fields = [
+        "ProductID",
+        "ProductName",
+        "Category",
+        "Brand",
+        "Price",
+        "Stock",
+        "Status"
+    ]
+
+    for field in product_fields:
+        assert field in product, f"Missing field: {field}"
+
+    logging.info("Product Details:")
+    for key, value in product.items():
+        logging.info(f"{key}: {value}")
+
+
+
+  
