@@ -45,10 +45,21 @@ jobs:
           mkdir -p logs
           mkdir -p reports
 
+      - name: Check MySQL Database
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-client
+
+          echo "===== SHOW DATABASES ====="
+          mysql -h 127.0.0.1 -uroot -proot123! -e "SHOW DATABASES;"
+
+          echo "===== SHOW TABLES ====="
+          mysql -h 127.0.0.1 -uroot -proot123! products -e "SHOW TABLES;"
+
       - name: Start FastAPI Server
         run: |
           uvicorn main:app --host 127.0.0.1 --port 8000 --log-level debug > logs/uvicorn.log 2>&1 &
-          sleep 10
+          sleep 15
 
       - name: Run API Tests
         run: |
@@ -57,7 +68,7 @@ jobs:
       - name: Show Uvicorn Log
         if: always()
         run: |
-          echo "========== Uvicorn Log =========="
+          echo "========== UVICORN LOG =========="
           cat logs/uvicorn.log
 
       - name: Upload HTML Report

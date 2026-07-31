@@ -36,3 +36,12 @@ def get_db():
         yield db
     finally:
         db.close()
+
+import models
+
+print("========== TABLES REGISTERED ==========")
+print(Base.metadata.tables.keys())
+
+Base.metadata.create_all(bind=engine)
+
+print("========== TABLE CREATION COMPLETE ==========")
